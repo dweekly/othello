@@ -1,0 +1,109 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package othello;
+
+service OthelloGame {
+  rpc CreateUser (CreateUserRequest) returns (CreateUserReply) {}
+  rpc DeleteUser (DeleteUserRequest) returns (DeleteUserReply) {}
+  rpc Login (LoginRequest) returns (LoginReply) {}
+  rpc ShowGames (ShowGamesRequest) returns (ShowGamesReply) {}
+  rpc GetGame (GetGameRequest) returns (GetGameReply) {}
+  rpc MakeMove (MakeMoveRequest) returns (MakeMoveReply) {}
+}
+
+message CreateUserRequest {
+  string name = 1;
+  string email = 2;
+  string phone = 3;
+  string password = 4;
+}
+
+message CreateUserReply {
+  int64 sessionID = 1;
+}
+
+message DeleteUserRequest {
+  int64 sessionID = 1;
+  string password = 2;
+}
+
+message DeleteUserReply {
+}
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message LoginReply {
+  int64 sessionID = 1;
+}
+
+message ShowGamesRequest {
+  int64 sessionID = 1;
+  Game.Status withStatus = 2;
+}
+
+message ShowGamesReply {
+  repeated Game games = 1;
+}
+
+message GetGameRequest {
+  int64 gameID = 1;
+}
+
+message GetGameReply {
+  Game game = 1;
+}
+
+message MakeMoveRequest {
+  int64 sessionID = 1;
+  int32 x = 2;
+  int32 y = 3;
+}
+
+message MakeMoveReply {
+  Game game = 1;
+}
+
+message Game {
+  google.protobuf.Timestamp whenStarted = 1;
+
+  enum Status {
+    LOOKING_FOR_OPPONENT = 0;
+    PLAYING = 1;
+    COMPLETED = 2;
+  }
+  Status status = 2;
+  
+  enum CompletionReason {
+    NOT_COMPLETED = 0; // game is still being played
+    P1_WIN = 1; // Player One won.
+    P2_WIN = 2; // Player Two won.
+    TIE = 3; // it was a tie.
+    ERROR = 4; // there was a technical error, nobody won.
+  }
+  CompletionReason completionReason = 3;
+  
+  enum NextMove { // who has the next move?
+    P1 = 0;
+    P2 = 1;
+    END = 2; // game is over, nobody can move.
+  }
+  NextMove nextMove = 4;
+  
+  repeated Move movesMade = 5;
+}
+
+message Move {
+  google.protobuf.Timestamp whenMade = 1;
+  enum MoveBy {
+    P1 = 0;
+    P2 = 1;
+  }
+  MoveBy moveBy = 2;
+  int32 x = 3;
+  int32 y = 4;
+}

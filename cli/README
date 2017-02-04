@@ -1,0 +1,1 @@
+This directory has the command line go client, which connects to the server over gRPC.
