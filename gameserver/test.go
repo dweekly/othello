@@ -1,5 +1,7 @@
 package main
 
+// This is an end-to-end test of the backend server via the gRPC API
+
 import (
 	"log"
 	
